@@ -1,4 +1,5 @@
 const db = require("../config/db.config");
+const bcrypt = require("bcrypt")
 class User {
   constructor(
     email,
@@ -36,6 +37,22 @@ class User {
         }
         // console.log("Created user: ", { ...newUser });
         result(null, { id: res.insertId, ...newUser });
+      }
+    );
+  }
+  static login(email, result){
+    db.query(
+      "SELECT * FROM users WHERE email=?",
+      [email],
+      (err, res) => {
+        if (err) {
+          return result(err, null);
+        }
+        if(res.length){
+          return result(null, res[0])
+        }
+        
+        result({kind: "not found"}, null)
       }
     );
   }
