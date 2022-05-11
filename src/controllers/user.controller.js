@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
 
 exports.create = async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   if (Object.keys(req.body).length === 0) {
     res.status(400).send({ message: "Content cannot be empty" });
     return;
