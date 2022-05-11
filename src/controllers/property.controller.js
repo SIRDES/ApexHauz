@@ -43,23 +43,23 @@ exports.create = async (req, res) => {
 };
 
 // Getting all properties from the database
-// exports.getAll = async (req, res) => {
+exports.getAll = async (req, res) => {
   
-//   Property.findAll(async (err, data) => {
-//     if (err) {
-//       if (err.kind === "not found") {
-//         res.status(404).send({
-//           "status": "error",
-//           "error": "Not property was found in the database",
-//         });
-//       } else {
-//         res.status(500).send({
-//           "status": "error",
-//           "error": err.message || "some error occured while signing in user",
-//         });
-//       }
-//     }
-//     // Found property
-//     res.status(200).send({ "status": "success", "data": [...data] });
-//   });
-// };
+  Property.findAll(async (err, data) => {
+    if (err) {
+      if (err.kind === "not found") {
+        res.status(404).send({
+          "status": "error",
+          "error": "Not property was found in the database",
+        });
+      } else {
+        res.status(500).send({
+          "status": "error",
+          "error": err.message || "some error occured while signing in user",
+        });
+      }
+    }
+    // Found property
+    res.status(200).send({ "status": "success", "data": [...data] });
+  });
+};

@@ -33,18 +33,18 @@ class Property {
       }
     );
   }
-  // static findAll(result) {
-  //   db.query("SELECT * FROM Property", (err, res) => {
-  //     if (err) {
-  //       return result(err, null);
-  //     }
-  //     if (res.length) {
-  //       return result(null, res);
-  //     }
+  static findAll(result) {
+    db.query("SELECT * FROM Property", (err, res) => {
+      if (err) {
+        return result(err, null);
+      }
+      if (res.length) {
+        return result(null, res);
+      }
 
-  //     result({ kind: "not found" }, null);
-  //   });
-  // }
+      result({ kind: "not found" }, null);
+    });
+  }
 }
 
 module.exports = Property;
