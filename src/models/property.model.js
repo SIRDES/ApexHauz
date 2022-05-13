@@ -45,6 +45,17 @@ class Property {
       result({ kind: "not found" }, null);
     });
   }
+  static findOne(property_id,results){
+    db.query("SELECT * FROM Property WHERE property_id=?",[property_id], (err,res)=> {
+      if(err){
+        return results(err,null)
+      }
+      if(res.length){
+        return results(null, res[0])
+      }
+      results({kind: "not found"},null)
+    })
+  }
 }
 
 module.exports = Property;
