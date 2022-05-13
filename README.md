@@ -122,18 +122,11 @@ Property
     ...
 
 }
-CREATE TABLE Property (
-  property_id INT PRIMARY KEY,
-  owner_id INT UNSIGNED,
-  status varchar(10) DEFAULT 'available',
-  price FLOAT NOT NULL,
-  state varchar(20),
-  city varchar(20),
-  address varchar(200) NOT NULL,
-  type varchar(50),
-  image_url varchar(200),
-  created_on DATETIME,
-  FOREIGN KEY (owner_id) REFERENCES users (id) ON DELETE CASCADE
+CREATE TABLE tokens (
+  token_id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT UNSIGNED,
+  token varchar(255) NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 )
 ALTER TABLE Property MODIFY property_id INT PRIMARY KEY AUTO_INCREMENT
 Reports

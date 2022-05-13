@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
+const generateToken = require("../middleware/generateToken");
 
 exports.create = async (req, res) => {
   // console.log(req.body);
@@ -56,7 +57,8 @@ exports.login = async (req, res) => {
     req.body.email === "" ||
     req.body.email === undefined ||
     req.body.password === "" ||
-    req.body.password === undefined
+    req.body.password === undefined ||
+    req.body.password === null
   ) {
     res
       .status(400)
@@ -92,6 +94,27 @@ exports.login = async (req, res) => {
       return;
     }
     delete data.password;
-    res.status(200).send({ status: "success", data: { ...data } });
+    res.status(200).send({ "status": "success", "data": { ...data } });
   });
 };
+
+exports.logout = (req, res) => {
+  User.signout(req.token, (error, result)=> {
+    if(result.kind === "success"){
+      res.status(200).send({ status: "success", message: "User logged out successfully" });
+    }else(      
+      res.status(500).send({"status":"error","Error": "Authentication error"})
+    )
+  })
+}
+
+exports.logoutAll=(req, res)=> {
+  User.signoutAll(req.user.id, (err,result)=> {
+    // console.log(result)
+    if(result.kind === "success"){
+      res.status(200).send({"status": "success", "message": "User logged out from all devices successfully"})
+    }else{
+      res.status(500).send({ status: "error", Error: "Authentication error" });
+    }
+  })
+}
