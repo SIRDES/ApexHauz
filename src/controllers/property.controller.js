@@ -16,12 +16,11 @@ exports.create = async (req, res) => {
       .send({ status: "error", error: "price or address cannot be empty" });
     return;
   }
-
   //create a new instance of a property
-  const { owner_id, status, price, state, city, address, type } = req.body;
+  const {status, price, state, city, address, type } = req.body;
 
   const property = new Property(
-    owner_id,
+    req.user.id,
     status,
     price,
     state,
@@ -37,6 +36,8 @@ exports.create = async (req, res) => {
         "error": err.message || "some error occured while creating user",
       });
     } else {
+      {data.status === undefined ? data["status"]="available" : data.status=== "" ? data.status = "available": "" }
+
       res.status(201).send({ "status": "success", "data": { ...data } });
     }
   });

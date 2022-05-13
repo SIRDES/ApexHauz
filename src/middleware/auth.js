@@ -4,19 +4,47 @@ const jwt = require("jsonwebtoken");
 const auth = async (req, res, next) => {
   try {
     const token = req.header("Authorization").replace("Bearer ", "");
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    db.query("SELECT * From users WHERE id=?", [decoded.id], (err, data) => {
+    db.query("SELECT * FROM tokens WHERE token=?", [token], (err, results) => {
       if (err) {
-        throw new Error();
+        res
+          .status(401)
+          .send({ status: "error", error: "Authentication error" });
+        return;
       }
-      if (data.length) {
-        req.user = data[0];
-        next();
+      if (results.length) {
+        const decoded = jwt.verify(results[0].token, process.env.JWT_SECRET);
+        db.query(
+          "SELECT * From users WHERE id=?",
+          [decoded.id],
+          (err, data) => {
+            if (err) {
+              res
+                .status(401)
+                .send({ status: "error", error: "Authentication error" });
+                return
+            }
+            if (data.length) {
+              req.token = token;
+              delete data[0].password
+              req.user = data[0];
+              next();
+              return;
+            } else {
+              res
+                .status(401)
+                .send({ status: "error", error: "Use is logged out" });
+            }
+          }
+        );
+      } 
+      else {
+        res
+          .status(401)
+          .send({ status: "error", error: "User is logged out" });
       }
-      throw new Error();
     });
   } catch (error) {
-    res.status(401).send({ status: "error", error: "authentication error" });
+    res.status(401).send({ status: "error", error: "Authentication error" });
   }
 };
 
