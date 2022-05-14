@@ -122,11 +122,11 @@ Property
     ...
 
 }
-CREATE TABLE tokens (
-  token_id INT PRIMARY KEY AUTO_INCREMENT,
-  user_id INT UNSIGNED,
-  token varchar(255) NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+CREATE TABLE images (
+  image_id INT PRIMARY KEY AUTO_INCREMENT,
+  property_id INT UNSIGNED,
+  image_url varchar(255) NOT NULL,
+  FOREIGN KEY (property_id) REFERENCES Property (property_id) ON DELETE CASCADE
 )
 ALTER TABLE Property MODIFY property_id INT PRIMARY KEY AUTO_INCREMENT
 Reports
