@@ -7,6 +7,11 @@ const userRouter = require("./src/routes/user.route");
 const propertyRouter = require("./src/routes/property.route");
 const app = express();
 
+
+// app.post("/upload",upload.array("upload"),(req,res) => {
+// res.send()
+// })
+
 app.use(cors());
 
 app.use(express.json());
@@ -16,6 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 userRouter(app);
 propertyRouter(app);
 // console.log(genToken(1234))
+
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
