@@ -84,6 +84,17 @@ class Property {
       }
     })
   }
+  static remove = (body, callback) => {
+    db.query("DELETE FROM Property WHERE (owner_id=? AND property_id=?)",[body.user_id, body.property_id], (error, results) => {
+      if(error){
+        return callback(error,null)
+      }
+      if(results.affectedRows >= 1){
+        return callback(null, {kind: "deleted"})
+      }
+      return callback({kind: "not owner"}, null)
+    })
+  }
 }
 
 module.exports = Property;

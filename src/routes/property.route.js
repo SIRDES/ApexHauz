@@ -9,6 +9,7 @@ module.exports = (app) => {
     res.send({"error": error.message})
   });
   router.patch("/:id/sold",auth,property.status);
+  router.delete("/:id", auth, property.delete);
   router.get("/", property.getAll);
   router.get("/:id", property.getOne);
 

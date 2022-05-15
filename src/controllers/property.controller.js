@@ -125,10 +125,15 @@ exports.status = (req, res) => {
   const user_id = req.user.id;
 
   const { status } = req.body;
-  const {error, value} = StatusSchema.validate({status})
-  if(error){
-    res.status(404).send({status: "error", error: error.message.replace('/[^a-zA-Z0-9 ]/g', '')})
-    return
+  const { error, value } = StatusSchema.validate({ status });
+  if (error) {
+    res
+      .status(404)
+      .send({
+        status: "error",
+        error: error.message.replace("/[^a-zA-Z0-9 ]/g", ""),
+      });
+    return;
   }
   Property.sold({ property_id: id, status, user_id }, (error, response) => {
     if (error) {
@@ -154,6 +159,52 @@ exports.status = (req, res) => {
       res.status(200).send({
         status: "success",
         message: "Property status updated successfully",
+      });
+    } else {
+      res.status(500).send({
+        status: "error",
+        error:
+          error.message ||
+          `some error occured while updating property with id ${id}`,
+      });
+    }
+  });
+};
+
+exports.delete = (req, res) => {
+  const { id } = req.params;
+  const user_id = req.user.id;
+  Property.remove({ property_id: id, user_id }, (error, results) => {
+    if (error) {
+      if (error.kind === "not owner") {
+        res
+          .status(404)
+          .send({
+            status: "error",
+            error:
+              "Sorry! You can only delete a property that was posted by you",
+          });
+      } else {
+        res
+          .status(500)
+          .send({
+            status: "error",
+            error:
+              error.message ||
+              `some error occured while deleting property with id ${id}`,
+          });
+      }
+    } else if (results.kind === "deleted") {
+      res.status(200).send({
+        status: "success",
+        message: "Property status deleted successfully",
+      });
+    }else{
+      res.status(500).send({
+        status: "error",
+        error:
+          error.message ||
+          `some error occured while deleting property with id ${id}`,
       });
     }
   });
