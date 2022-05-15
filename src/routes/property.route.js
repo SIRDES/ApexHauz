@@ -8,8 +8,9 @@ module.exports = (app) => {
   router.post("/:id/upload", auth, multer.array("images"), property.uploadImages, (error, req, res,next)=> {
     res.send({"error": error.message})
   });
+  router.patch("/:id/sold",auth,property.status);
   router.get("/", property.getAll);
   router.get("/:id", property.getOne);
 
-  app.use("/api/v1/property", router);
+  app.use("/v1/property", router);
 };

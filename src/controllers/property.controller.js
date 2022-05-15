@@ -1,5 +1,6 @@
 const Property = require("../models/property.model");
 const imageUpload = require("../utils/imageUpload");
+const StatusSchema = require("../validators/validators");
 
 exports.create = async (req, res, next) => {
   if (Object.keys(req.body).length === 0) {
@@ -30,7 +31,6 @@ exports.create = async (req, res, next) => {
     address,
     type
   );
-  next()
   //save a property
   Property.create(property, (err, data) => {
     if (err) {
@@ -48,7 +48,7 @@ exports.create = async (req, res, next) => {
       }
       // console.log(data);
       req.property = data;
-      res.status(201).send({ "status": "success", "data": { ...data } });
+      res.status(201).send({ status: "success", data: { ...data } });
     }
     // console.log(req.property);
     next();
@@ -58,8 +58,8 @@ exports.create = async (req, res, next) => {
 exports.uploadImages = async (req, res) => {
   // console.log("multer error")
   const files = req.files;
- const {id} = req.params
-  imageUpload({ property_id :id, files }, (err, urls) => {
+  const { id } = req.params;
+  imageUpload({ property_id: id, files }, (err, urls) => {
     if (err) {
       res.status(500).send({
         status: "error",
@@ -116,6 +116,45 @@ exports.getOne = (req, res) => {
       }
     } else {
       res.status(200).send({ status: "success", data });
+    }
+  });
+};
+
+exports.status = (req, res) => {
+  const { id } = req.params;
+  const user_id = req.user.id;
+
+  const { status } = req.body;
+  const {error, value} = StatusSchema.validate({status})
+  if(error){
+    res.status(404).send({status: "error", error: error.message.replace('/[^a-zA-Z0-9 ]/g', '')})
+    return
+  }
+  Property.sold({ property_id: id, status, user_id }, (error, response) => {
+    if (error) {
+      if (error.kind === "not found") {
+        res.status(404).send({
+          status: "error",
+          error: `Could not find property with id ${id}`,
+        });
+      } else if (error.kind === "not owner") {
+        res.status(401).send({
+          status: "error",
+          error: "User cannot update this property",
+        });
+      } else {
+        res.status(500).send({
+          status: "error",
+          error:
+            error.message ||
+            `some error occured while updating property with id ${id}`,
+        });
+      }
+    } else if (response.kind === "updated") {
+      res.status(200).send({
+        status: "success",
+        message: "Property status updated successfully",
+      });
     }
   });
 };

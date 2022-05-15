@@ -8,5 +8,5 @@ module.exports = (app) => {
   router.post("/auth/logout",auth, userController.logout);
   router.post("/auth/logoutAll", auth, userController.logoutAll);
 
-  app.use("/api/v1/users", router);
+  app.use("/v1", router);
 };
