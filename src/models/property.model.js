@@ -56,6 +56,34 @@ class Property {
       results({kind: "not found"},null)
     })
   }
+  static sold(body, callback){
+
+    db.query("SELECT * FROM Property WHERE (owner_id=? AND property_id=?)",[body.user_id, body.property_id], (error, response) => {
+      if(error){
+        return callback(error, null)        
+      }
+      if(response.length){
+          db.query(
+            "UPDATE Property SET status=? WHERE property_id=?",
+            [body.status, body.property_id],
+            (err, res) => {
+              if (err) {
+                return callback(err, null);            
+              }
+              if (res.affectedRows >= 1) {
+               return  callback(null, { kind: "updated" });
+            
+              }else{
+                
+                return callback({ kind: "not found" }, null);
+              }
+            }
+          );
+      }else{
+        return callback({ kind: "not owner" }, null);
+      }
+    })
+  }
 }
 
 module.exports = Property;
