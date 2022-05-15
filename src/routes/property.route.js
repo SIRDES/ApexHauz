@@ -8,6 +8,7 @@ module.exports = (app) => {
   router.post("/:id/upload", auth, multer.array("images"), property.uploadImages, (error, req, res,next)=> {
     res.send({"error": error.message})
   });
+  router.patch("/:id", auth, property.update);
   router.patch("/:id/sold",auth,property.status);
   router.delete("/:id", auth, property.delete);
   router.get("/", property.getAll);

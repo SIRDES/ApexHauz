@@ -20,7 +20,6 @@ app.use(express.urlencoded({ extended: true }));
 // app.use("/api/v1/users", router)
 userRouter(app);
 propertyRouter(app);
-// console.log(genToken(1234))
 
 
 const PORT = process.env.PORT || 3000;

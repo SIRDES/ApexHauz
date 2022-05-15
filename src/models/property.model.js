@@ -45,56 +45,99 @@ class Property {
       result({ kind: "not found" }, null);
     });
   }
-  static findOne(property_id,results){
-    db.query("SELECT * FROM Property WHERE property_id=?",[property_id], (err,res)=> {
-      if(err){
-        return results(err,null)
+  static findOne(property_id, results) {
+    db.query(
+      "SELECT * FROM Property WHERE property_id=?",
+      [property_id],
+      (err, res) => {
+        if (err) {
+          return results(err, null);
+        }
+        if (res.length) {
+          return results(null, res[0]);
+        }
+        results({ kind: "not found" }, null);
       }
-      if(res.length){
-        return results(null, res[0])
-      }
-      results({kind: "not found"},null)
-    })
+    );
   }
-  static sold(body, callback){
 
-    db.query("SELECT * FROM Property WHERE (owner_id=? AND property_id=?)",[body.user_id, body.property_id], (error, response) => {
-      if(error){
-        return callback(error, null)        
+  // This method updates the details of a property in the database
+  static update(body, callback) {
+    db.query(
+      "SELECT * FROM Property WHERE (owner_id=? AND property_id=?)",
+      [body.user_id, body.property_id],
+      (error, response) => {
+        if (error) {
+          return callback(error, null);
+        }
+        if (response.length) {
+          // body.updates.forEach((update)=> )
+          const updateFields = Object.keys(body.updates)
+          updateFields.forEach((update) => {
+            db.query(
+              `UPDATE Property SET ${update}=? WHERE property_id=?`,
+              [body.updates[update], body.property_id],
+              (err, res) => {
+                // console.log(body.updates[update])
+                if(err){
+                  return callback(err,null)
+                }
+              }
+            );
+          })
+          return callback(null, {kind: "updated"})
+          
+        } else {
+          return callback({ kind: "not owner" }, null);
+        }
       }
-      if(response.length){
+    );
+  }
+
+  static sold(body, callback) {
+    db.query(
+      "SELECT * FROM Property WHERE (owner_id=? AND property_id=?)",
+      [body.user_id, body.property_id],
+      (error, response) => {
+        if (error) {
+          return callback(error, null);
+        }
+        if (response.length) {
           db.query(
             "UPDATE Property SET status=? WHERE property_id=?",
             [body.status, body.property_id],
             (err, res) => {
               if (err) {
-                return callback(err, null);            
+                return callback(err, null);
               }
               if (res.affectedRows >= 1) {
-               return  callback(null, { kind: "updated" });
-            
-              }else{
-                
+                return callback(null, { kind: "updated" });
+              } else {
                 return callback({ kind: "not found" }, null);
               }
             }
           );
-      }else{
-        return callback({ kind: "not owner" }, null);
+        } else {
+          return callback({ kind: "not owner" }, null);
+        }
       }
-    })
+    );
   }
   static remove = (body, callback) => {
-    db.query("DELETE FROM Property WHERE (owner_id=? AND property_id=?)",[body.user_id, body.property_id], (error, results) => {
-      if(error){
-        return callback(error,null)
+    db.query(
+      "DELETE FROM Property WHERE (owner_id=? AND property_id=?)",
+      [body.user_id, body.property_id],
+      (error, results) => {
+        if (error) {
+          return callback(error, null);
+        }
+        if (results.affectedRows >= 1) {
+          return callback(null, { kind: "deleted" });
+        }
+        return callback({ kind: "not owner" }, null);
       }
-      if(results.affectedRows >= 1){
-        return callback(null, {kind: "deleted"})
-      }
-      return callback({kind: "not owner"}, null)
-    })
-  }
+    );
+  };
 }
 
 module.exports = Property;

@@ -1,6 +1,6 @@
 const Property = require("../models/property.model");
 const imageUpload = require("../utils/imageUpload");
-const StatusSchema = require("../validators/validators");
+const {StatusSchema, updateSchema} = require("../validators/validators");
 
 exports.create = async (req, res, next) => {
   if (Object.keys(req.body).length === 0) {
@@ -119,7 +119,52 @@ exports.getOne = (req, res) => {
     }
   });
 };
+// This module updates the details fo a property advert
+exports.update = (req, res) => {
+  const { id } = req.params;
+  const user_id = req.user.id;
+  
+  const updates = req.body;
+  const { error, value } = updateSchema.validate(updates);
+  if (error) {
+    res.status(404).send({
+      status: "error",
+      error: error.message.replace("/[^a-zA-Z0-9 ]/g", ""),
+    });
+    return;
+  }
+  Property.update({ property_id: id,user_id, updates }, (error, response) => {
+    if (error) {
+      if (error.kind === "not owner") {
+        res.status(401).send({
+          status: "error",
+          error: "User cannot update this property",
+        });
+      } else {
+        res.status(500).send({
+          status: "error",
+          error:
+            error.message ||
+            `some error occured while updating property with id ${id}`,
+        });
+      }
+    } else if (response.kind === "updated") {
+      res.status(200).send({
+        status: "success",
+        message: "Property details updated successfully",
+      });
+    } else {
+      res.status(500).send({
+        status: "error",
+        error:
+          error.message ||
+          `some error occured while updating property with id ${id}`,
+      });
+    }
+  });
+};
 
+// This module marks a property sold or available
 exports.status = (req, res) => {
   const { id } = req.params;
   const user_id = req.user.id;
