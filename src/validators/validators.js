@@ -28,5 +28,15 @@ const reportSchema = Joi.object({
   reason: text.required(),
   description: text.required(),
 });
+const resetPasswordSchema = Joi.object({
+  email: Joi.string().email().required(),
+  currentPassword: text.required(),
+ newPassword: text.required(),
+});
 
-module.exports = { StatusSchema, updateSchema, reportSchema};
+module.exports = {
+  StatusSchema,
+  updateSchema,
+  reportSchema,
+  resetPasswordSchema,
+};

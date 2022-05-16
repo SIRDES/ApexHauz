@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
 const generateToken = require("../middleware/generateToken");
+const {resetPasswordSchema} = require("../validators/validators")
 
 exports.create = async (req, res) => {
   // console.log(req.body);
@@ -19,7 +20,7 @@ exports.create = async (req, res) => {
   const { email, first_name, last_name, password, phone, address, is_admin } =
     req.body;
 
-  const hashPassword = await bcrypt.hash(password, 8);
+  const hashPassword = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));
 
   const user = new User(
     email,
@@ -94,16 +95,47 @@ exports.login = async (req, res) => {
       return;
     }
     delete data.password;
-    res.status(200).send({ "status": "success", "data": { ...data } });
+    res.status(200).send({ status: "success", data: { ...data } });
   });
 };
+exports.resetPassword = (req,res) => {
+// const {currentPassword, newPassword}=req.body
+const {error, value} = resetPasswordSchema.validate(req.body)
+if(error){
+  res.status(404).send({status: "error", error: error.message})
+  return
+}
+User.resetPassword(value, (error, response)=>{
+  if(error){
+    if (error.kind === "not match") {
+      res
+        .status(404)
+        .send({ status: "error", error: "invalid email or password" });
+      
+    }else{
+      res.status(500).send({
+        status: "error",
+        error: error.message || "some error occured while resetting password",
+      });
+    }
+    return
+  }
+  if(response?.kind === "success"){
+    res.status(202).send({status: "successful", data: req.user})
+    return
+  }
+  return
+})
+
+}
+
 
 exports.logout = (req, res) => {
   User.signout(req.token, (error, result)=> {
-    if(result.kind === "success"){
+    if(result?.kind === "success"){
       res.status(200).send({ status: "success", message: "User logged out successfully" });
     }else(      
-      res.status(500).send({"status":"error","Error": "Authentication error"})
+      res.status(500).send({status:"error",error: "Authentication error"})
     )
   })
 }
