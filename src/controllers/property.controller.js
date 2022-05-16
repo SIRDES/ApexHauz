@@ -1,6 +1,6 @@
 const Property = require("../models/property.model");
 const imageUpload = require("../utils/imageUpload");
-const {StatusSchema, updateSchema} = require("../validators/validators");
+const {StatusSchema, updateSchema, reportSchema} = require("../validators/validators");
 
 exports.create = async (req, res, next) => {
   if (Object.keys(req.body).length === 0) {
@@ -238,6 +238,29 @@ exports.status = (req, res) => {
       });
     }
   });
+};
+
+exports.report = (req, res) => {
+  const { id } = req.params;
+  const user_id = req.user.id;
+
+  // const { reason } = req.body;
+  const { error, value } = reportSchema.validate(req.body);
+  if (error) {
+    res.status(404).send({
+      status: "error",
+      error: error.message.replace("/[^a-zA-Z0-9 ]/g", ""),
+    });
+    return;
+  }
+  Property.report({ property_id: id, user_id, ...value }, (error, response) => {
+    // console.log(response)
+    if(response?.kind === "reported"){
+      res.status(200).send({status: "success", message: "Report submitted successfully!"})
+    }else{
+      res.status(500).send({status: "error", error: error.message || `An error occured while reporting property with id ${id}`})
+    }
+  })
 };
 
 exports.delete = (req, res) => {

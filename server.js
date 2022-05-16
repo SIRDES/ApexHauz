@@ -2,15 +2,11 @@ const express = require("express");
 const router = express.Router();
 const cors = require("cors");
 require("dotenv").config();
-// const genToken = require("./src/middleware/generateToken")
 const userRouter = require("./src/routes/user.route");
 const propertyRouter = require("./src/routes/property.route");
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-
-// app.post("/upload",upload.array("upload"),(req,res) => {
-// res.send()
-// })
 
 app.use(cors());
 
@@ -22,8 +18,14 @@ userRouter(app);
 propertyRouter(app);
 
 
-const PORT = process.env.PORT || 3000;
-
+app.use((error, req, res, next) => {
+  if (error) {
+    res
+      .status(error.statusCode || 500)
+      .send({ status: "error", error: error.message });
+  }
+  next();
+});
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

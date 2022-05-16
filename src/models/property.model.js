@@ -10,7 +10,7 @@ class Property {
     this.address = address;
     this.type = type;
   }
-  static create(newProperty, result) {
+  static create(newProperty, callback) {
     db.query(
       "INSERT INTO Property(owner_id,status,price,state,city,address, type) values(?,?,?,?,?,?,?)",
       [
@@ -25,11 +25,11 @@ class Property {
       (err, res) => {
         if (err) {
           // console.log("error ", err);
-          result(err, null);
+          callback(err, null);
           return;
         }
         // console.log("Created user: ", { ...newProperty });
-        result(null, { id: res.insertId, ...newProperty });
+        callback(null, { id: res.insertId, ...newProperty });
       }
     );
   }
@@ -62,19 +62,15 @@ class Property {
   }
   // find properties by type
   static findByType(type, callback) {
-    db.query(
-      "SELECT * FROM Property WHERE type=?",
-      [type],
-      (err, res) => {
-        if (err) {
-          return callback(err, null);
-        }
-        if (res.length) {
-          return callback(null, res);
-        }
-        callback({ kind: "not found" }, null);
+    db.query("SELECT * FROM Property WHERE type=?", [type], (err, res) => {
+      if (err) {
+        return callback(err, null);
       }
-    );
+      if (res.length) {
+        return callback(null, res);
+      }
+      callback({ kind: "not found" }, null);
+    });
   }
   // This method updates the details of a property in the database
   static update(body, callback) {
@@ -152,6 +148,21 @@ class Property {
       }
     );
   };
+
+  static report(body, callback) {
+    db.query(
+      "INSERT INTO Reports(property_id,reason,description,user_id) values(?,?,?,?)",
+      [body.property_id, body.reason, body.description, body.user_id],
+      (err, res) => {
+        if (err) {
+          // console.log("error ", err);
+          callback(err, null);
+        }else{
+          callback(null, { kind: "reported" });
+        }
+      }
+    );
+  }
 }
 
 module.exports = Property;
