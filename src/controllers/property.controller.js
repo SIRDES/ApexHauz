@@ -1,26 +1,19 @@
 const Property = require("../models/property.model");
 const imageUpload = require("../utils/imageUpload");
-const {StatusSchema, updateSchema, reportSchema} = require("../validators/validators");
+const {newPropertySchema,statusSchema, updateSchema, reportSchema} = require("../validators/propertyValidators");
 
 exports.create = async (req, res, next) => {
-  if (Object.keys(req.body).length === 0) {
-    res.status(400).send({ message: "Content cannot be empty" });
-    return;
-  }
-  if (
-    req.body.price === "" ||
-    req.body.price === undefined ||
-    req.body.address === "" ||
-    req.body.address === undefined
-  ) {
-    res
-      .status(400)
-      .send({ status: "error", error: "price or address cannot be empty" });
-    return;
-  }
-
+  
+  const {error,value} =newPropertySchema.validate(req.body)
+if (error) {
+  res.status(404).send({
+    status: "error",
+    error: error.message.replace("/[^a-zA-Z0-9 ]/g", ""),
+  });
+  return;
+}
   //create a new instance of a property
-  const { status, price, state, city, address, type } = req.body;
+  const { status, price, state, city, address, type } = value;
 
   const property = new Property(
     req.user.id,
@@ -39,26 +32,19 @@ exports.create = async (req, res, next) => {
         error: err.message || "some error occured while creating user",
       });
     } else {
-      {
-        data.status === undefined
-          ? (data["status"] = "available")
-          : data.status === ""
-          ? (data.status = "available")
-          : "";
-      }
-      // console.log(data);
       req.property = data;
       res.status(201).send({ status: "success", data: { ...data } });
     }
-    // console.log(req.property);
     next();
   });
 };
 
 exports.uploadImages = async (req, res) => {
   // console.log("multer error")
-  const files = req.files;
   const { id } = req.params;
+  const files = req.files;
+  // console.log(files);
+
   imageUpload({ property_id: id, files }, (err, urls) => {
     if (err) {
       res.status(500).send({
@@ -194,7 +180,7 @@ exports.status = (req, res) => {
   const user_id = req.user.id;
 
   const { status } = req.body;
-  const { error, value } = StatusSchema.validate({ status });
+  const { error, value } = statusSchema.validate({ status });
   if (error) {
     res
       .status(404)

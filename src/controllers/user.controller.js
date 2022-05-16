@@ -1,24 +1,17 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
-const generateToken = require("../middleware/generateToken");
-const {resetPasswordSchema} = require("../validators/validators")
+const {resetPasswordSchema, signupSchema, loginSchema} = require("../validators/userValidators")
 
 exports.create = async (req, res) => {
-  // console.log(req.body);
-  if (Object.keys(req.body).length === 0) {
-    res.status(400).send({ message: "Content cannot be empty" });
-    return;
-  }
-  if (req.body.email === "" || req.body.password === "") {
-    res
-      .status(400)
-      .send({ status: "error", error: "Email or password cannot be empty" });
-    return;
-  }
-
+  
+  const {error, value} = signupSchema.validate(req.body)
+if (error) {
+  res.status(404).send({ status: "error", error: error.message });
+  return;
+}
   //create a new instance of a user
   const { email, first_name, last_name, password, phone, address, is_admin } =
-    req.body;
+    value;
 
   const hashPassword = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));
 
@@ -48,29 +41,13 @@ exports.create = async (req, res) => {
 
 // Getting a user from the database
 exports.login = async (req, res) => {
-  // Checking if req.body is empty
-  if (Object.keys(req.body).length === 0) {
-    res.status(400).send({ status: "error", error: "content cannot be empty" });
+  
+  const {error, value} = loginSchema.validate(req.body)
+  if (error) {
+    res.status(404).send({ status: "error", error: error.message });
     return;
   }
-  // checking if either email or password is empty or undefined
-  if (
-    req.body.email === "" ||
-    req.body.email === undefined ||
-    req.body.password === "" ||
-    req.body.password === undefined ||
-    req.body.password === null
-  ) {
-    res
-      .status(400)
-      .send({
-        status: "error",
-        error: "Email or password cannot be empty or null",
-      });
-    return;
-  }
-
-  const { email, password } = req.body;
+  const { email, password } = value;
   // Retrieving user details from the database
   User.login(email, async (err, data) => {
     if (err) {
