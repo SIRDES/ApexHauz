@@ -12,6 +12,7 @@ module.exports = (app) => {
   router.patch("/:id/sold",auth,property.status);
   router.delete("/:id", auth, property.delete);
   router.get("/", property.getAll);
+  router.get("/search", property.search);
   router.get("/:id", property.getOne);
 
   app.use("/v1/property", router);

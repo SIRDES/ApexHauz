@@ -45,22 +45,37 @@ class Property {
       result({ kind: "not found" }, null);
     });
   }
-  static findOne(property_id, results) {
+  static findOne(property_id, callback) {
     db.query(
       "SELECT * FROM Property WHERE property_id=?",
       [property_id],
       (err, res) => {
         if (err) {
-          return results(err, null);
+          return callback(err, null);
         }
         if (res.length) {
-          return results(null, res[0]);
+          return callback(null, res[0]);
         }
-        results({ kind: "not found" }, null);
+        callback({ kind: "not found" }, null);
       }
     );
   }
-
+  // find properties by type
+  static findByType(type, callback) {
+    db.query(
+      "SELECT * FROM Property WHERE type=?",
+      [type],
+      (err, res) => {
+        if (err) {
+          return callback(err, null);
+        }
+        if (res.length) {
+          return callback(null, res);
+        }
+        callback({ kind: "not found" }, null);
+      }
+    );
+  }
   // This method updates the details of a property in the database
   static update(body, callback) {
     db.query(
@@ -72,21 +87,20 @@ class Property {
         }
         if (response.length) {
           // body.updates.forEach((update)=> )
-          const updateFields = Object.keys(body.updates)
+          const updateFields = Object.keys(body.updates);
           updateFields.forEach((update) => {
             db.query(
               `UPDATE Property SET ${update}=? WHERE property_id=?`,
               [body.updates[update], body.property_id],
               (err, res) => {
                 // console.log(body.updates[update])
-                if(err){
-                  return callback(err,null)
+                if (err) {
+                  return callback(err, null);
                 }
               }
             );
-          })
-          return callback(null, {kind: "updated"})
-          
+          });
+          return callback(null, { kind: "updated" });
         } else {
           return callback({ kind: "not owner" }, null);
         }
@@ -127,11 +141,11 @@ class Property {
     db.query(
       "DELETE FROM Property WHERE (owner_id=? AND property_id=?)",
       [body.user_id, body.property_id],
-      (error, results) => {
+      (error, res) => {
         if (error) {
           return callback(error, null);
         }
-        if (results.affectedRows >= 1) {
+        if (res.affectedRows >= 1) {
           return callback(null, { kind: "deleted" });
         }
         return callback({ kind: "not owner" }, null);

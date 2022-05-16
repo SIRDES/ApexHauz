@@ -81,7 +81,7 @@ exports.getAll = async (req, res) => {
       if (err.kind === "not found") {
         res.status(404).send({
           status: "error",
-          error: "Not properties found",
+          error: "No properties found",
         });
       } else {
         res.status(500).send({
@@ -90,6 +90,30 @@ exports.getAll = async (req, res) => {
             err.message || "some error occured while retrieving properties",
         });
       }
+    }
+    // Found property
+    res.status(200).send({ status: "success", data: [...data] });
+  });
+};
+
+//search for property according their type
+exports.search = async (req, res) => {
+  const type = req.query.type
+  Property.findByType(type,async (err, data) => {
+    if (err) {
+      if (err.kind === "not found") {
+        res.status(404).send({
+          status: "error",
+          error: "No properties found",
+        });
+      } else {
+        res.status(500).send({
+          status: "error",
+          error:
+            err.message || "some error occured while retrieving properties",
+        });
+      }
+      return
     }
     // Found property
     res.status(200).send({ status: "success", data: [...data] });
