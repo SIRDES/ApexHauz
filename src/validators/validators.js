@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const text = Joi.string().trim()
 
 const StatusSchema = Joi.object({
   status: Joi.string()
@@ -17,10 +18,15 @@ const StatusSchema = Joi.object({
 
 const updateSchema = Joi.object({
   price: Joi.number(),
-  state: Joi.string().trim(),
-  city: Joi.string().trim(),
-  address: Joi.string().trim(),
-  type: Joi.string().trim(),
+  state: text,
+  city: text,
+  address: text,
+  type: text,
 });
 
-module.exports = { StatusSchema, updateSchema };
+const reportSchema = Joi.object({
+  reason: text.required(),
+  description: text.required(),
+});
+
+module.exports = { StatusSchema, updateSchema, reportSchema};

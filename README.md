@@ -123,13 +123,26 @@ Property
     ...
 
 }
-CREATE TABLE images (
-  image_id INT PRIMARY KEY AUTO_INCREMENT,
+"id": Integer,
+
+    "property_id": Integer,
+
+    "created_on": DateTime,
+
+    "reason": String,
+
+    "description": String,
+CREATE TABLE Reports (
+  id INT PRIMARY KEY AUTO_INCREMENT,
   property_id INT UNSIGNED,
-  image_url varchar(255) NOT NULL,
+  reason varchar(255),
+  description LONGTEXT,
+  created_on DATETIME DEFAULT NOW(),
   FOREIGN KEY (property_id) REFERENCES Property (property_id) ON DELETE CASCADE
 )
 ALTER TABLE Property MODIFY property_id INT PRIMARY KEY AUTO_INCREMENT
+ALTER TABLE Reports ADD user_id INT UNSIGNED
+
 Reports
 
 {

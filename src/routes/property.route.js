@@ -5,11 +5,10 @@ const multer = require("../utils/multer");
 
 module.exports = (app) => {
   router.post("/", auth, property.create);
-  router.post("/:id/upload", auth, multer.array("images"), property.uploadImages, (error, req, res,next)=> {
-    res.send({"error": error.message})
-  });
+  router.post("/:id/upload", auth, multer.array("images"), property.uploadImages);
   router.patch("/:id", auth, property.update);
   router.patch("/:id/sold",auth,property.status);
+  router.post("/:id/report", auth, property.report);
   router.delete("/:id", auth, property.delete);
   router.get("/", property.getAll);
   router.get("/search", property.search);
