@@ -143,7 +143,7 @@ exports.update = (req, res) => {
     });
     return;
   }
-  Property.update({ property_id: id,user_id, updates }, (error, response) => {
+  Property.update({ property_id: id,user_id, updates: value }, (error, response) => {
     if (error) {
       if (error.kind === "not owner") {
         res.status(401).send({

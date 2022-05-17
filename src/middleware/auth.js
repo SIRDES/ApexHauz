@@ -1,6 +1,6 @@
 const db = require("../config/db.config");
 const jwt = require("jsonwebtoken");
-
+const {JWT_SECRET} = require("../utils/secrets")
 const auth = async (req, res, next) => {
   try {
     const token = req.header("Authorization").replace("Bearer ", "");
@@ -12,7 +12,7 @@ const auth = async (req, res, next) => {
         return;
       }
       if (results.length) {
-        const decoded = jwt.verify(results[0].token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(results[0].token, JWT_SECRET);
         db.query(
           "SELECT * From users WHERE id=?",
           [decoded.id],

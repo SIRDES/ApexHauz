@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const cors = require("cors");
-require("dotenv").config();
+// require("dotenv").config();
 const fileupload = require("express-fileupload")
 const userRouter = require("./src/routes/user.route");
 const propertyRouter = require("./src/routes/property.route");

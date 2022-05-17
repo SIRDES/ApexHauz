@@ -12,7 +12,7 @@ class Property {
   }
   static create(newProperty, callback) {
     db.query(
-      "INSERT INTO Property(owner_id,status,price,state,city,address, type) values(?,?,?,?,?,?,?)",
+      "INSERT INTO properties(owner_id,status,price,state,city,address, type) values(?,?,?,?,?,?,?)",
       [
         newProperty.owner_id,
         newProperty.status,
@@ -34,7 +34,7 @@ class Property {
     );
   }
   static findAll(result) {
-    db.query("SELECT * FROM Property", (err, res) => {
+    db.query("SELECT * FROM properties", (err, res) => {
       if (err) {
         return result(err, null);
       }
@@ -47,7 +47,7 @@ class Property {
   }
   static findOne(property_id, callback) {
     db.query(
-      "SELECT * FROM Property WHERE property_id=?",
+      "SELECT * FROM properties WHERE property_id=?",
       [property_id],
       (err, res) => {
         if (err) {
@@ -62,7 +62,7 @@ class Property {
   }
   // find properties by type
   static findByType(type, callback) {
-    db.query("SELECT * FROM Property WHERE type=?", [type], (err, res) => {
+    db.query("SELECT * FROM properties WHERE type=?", [type], (err, res) => {
       if (err) {
         return callback(err, null);
       }
@@ -75,7 +75,7 @@ class Property {
   // This method updates the details of a property in the database
   static update(body, callback) {
     db.query(
-      "SELECT * FROM Property WHERE (owner_id=? AND property_id=?)",
+      "SELECT * FROM properties WHERE (owner_id=? AND property_id=?)",
       [body.user_id, body.property_id],
       (error, response) => {
         if (error) {
@@ -86,7 +86,7 @@ class Property {
           const updateFields = Object.keys(body.updates);
           updateFields.forEach((update) => {
             db.query(
-              `UPDATE Property SET ${update}=? WHERE property_id=?`,
+              `UPDATE properties SET ${update}=? WHERE property_id=?`,
               [body.updates[update], body.property_id],
               (err, res) => {
                 // console.log(body.updates[update])
@@ -106,7 +106,7 @@ class Property {
 
   static sold(body, callback) {
     db.query(
-      "SELECT * FROM Property WHERE (owner_id=? AND property_id=?)",
+      "SELECT * FROM properties WHERE (owner_id=? AND property_id=?)",
       [body.user_id, body.property_id],
       (error, response) => {
         if (error) {
@@ -114,7 +114,7 @@ class Property {
         }
         if (response.length) {
           db.query(
-            "UPDATE Property SET status=? WHERE property_id=?",
+            "UPDATE properties SET status=? WHERE property_id=?",
             [body.status, body.property_id],
             (err, res) => {
               if (err) {
@@ -135,7 +135,7 @@ class Property {
   }
   static remove = (body, callback) => {
     db.query(
-      "DELETE FROM Property WHERE (owner_id=? AND property_id=?)",
+      "DELETE FROM properties WHERE (owner_id=? AND property_id=?)",
       [body.user_id, body.property_id],
       (error, res) => {
         if (error) {
@@ -151,7 +151,7 @@ class Property {
 
   static report(body, callback) {
     db.query(
-      "INSERT INTO Reports(property_id,reason,description,user_id) values(?,?,?,?)",
+      "INSERT INTO reports(property_id,reason,description,user_id) values(?,?,?,?)",
       [body.property_id, body.reason, body.description, body.user_id],
       (err, res) => {
         if (err) {

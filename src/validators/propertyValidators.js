@@ -12,7 +12,7 @@ const statusSchema = Joi.object({
     .required(),
 });
 
-const updatePropertySchema = Joi.object({
+const updateSchema = Joi.object({
   price: Joi.number(),
   state: text,
   city: text,
@@ -40,7 +40,7 @@ const reportSchema = Joi.object({
 // status, price, state, city, address, type;
 module.exports = {
   statusSchema,
-  updatePropertySchema,
+  updateSchema,
   reportSchema,
   newPropertySchema
 };
