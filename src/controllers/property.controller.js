@@ -76,6 +76,7 @@ exports.getAll = async (req, res) => {
             err.message || "some error occured while retrieving properties",
         });
       }
+      return
     }
     // Found property
     res.status(200).send({ status: "success", data: [...data] });

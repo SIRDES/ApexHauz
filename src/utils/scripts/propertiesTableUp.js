@@ -10,6 +10,7 @@ const createTableProperties = `CREATE TABLE IF NOT EXISTS properties (
   address varchar(255),
   type VARCHAR(50) NOT NULL,
   is_admin Boolean,
+  images_url JSON,
   created_on TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
   )`

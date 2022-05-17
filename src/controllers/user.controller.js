@@ -62,6 +62,7 @@ exports.login = async (req, res) => {
           error: err.message || "some error occured while signing in user",
         });
       }
+      return
     }
     // Checking if passwords match
     const isMatch = await bcrypt.compare(password, data.password);

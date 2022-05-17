@@ -8,7 +8,7 @@
     "dev": "nodemon",
     "dbup": "node ./src/utils/scripts/dbup.js",
     "dbdown": "node ./src/utils/scripts/dbdown.js",
-    "tablesUp": "node ./src/utils/scripts/usersTableUp.js && node ./src/utils/scripts/tokensTableUp.js && node ./src/utils/scripts/propertiesTableUp.js && node ./src/utils/scripts/imagesTableUp.js && node ./src/utils/scripts/reportsTableUp.js",
+    "tablesUp": "node ./src/utils/scripts/usersTableUp.js && node ./src/utils/scripts/tokensTableUp.js && node ./src/utils/scripts/propertiesTableUp.js && node ./src/utils/scripts/reportsTableUp.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
