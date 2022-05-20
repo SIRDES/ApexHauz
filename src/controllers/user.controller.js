@@ -73,7 +73,7 @@ exports.login = async (req, res) => {
       return;
     }
     delete data.password;
-    res.status(200).send({ status: "success", data: { ...data } });
+    res.status(202).send({ status: "success", data: { ...data } });
   });
 };
 exports.resetPassword = (req,res) => {
