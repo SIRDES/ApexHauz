@@ -6,7 +6,7 @@ exports.create = async (req, res, next) => {
   
   const {error,value} =newPropertySchema.validate(req.body)
 if (error) {
-  res.status(404).send({
+  res.status(400).send({
     status: "error",
     error: error.message.replace("/[^a-zA-Z0-9 ]/g", ""),
   });
@@ -138,7 +138,7 @@ exports.update = (req, res) => {
   const updates = req.body;
   const { error, value } = updateSchema.validate(updates);
   if (error) {
-    res.status(404).send({
+    res.status(400).send({
       status: "error",
       error: error.message.replace("/[^a-zA-Z0-9 ]/g", ""),
     });
@@ -257,7 +257,7 @@ exports.delete = (req, res) => {
     if (error) {
       if (error.kind === "not owner") {
         res
-          .status(404)
+          .status(401)
           .send({
             status: "error",
             error:

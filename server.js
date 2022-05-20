@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const cors = require("cors");
-// require("dotenv").config();
-const fileupload = require("express-fileupload")
 const userRouter = require("./src/routes/user.route");
 const propertyRouter = require("./src/routes/property.route");
-const app = express();
+const swagger = require("./src/documentation/swagger")
 const PORT = process.env.PORT || 3000;
+
+const app = express();
 
 
 app.use(cors());
@@ -14,13 +14,10 @@ app.use(cors());
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
-// app.use(fileupload({
-//   useTempFiles: true
-// }))
-// app.use("/api/v1/users", router)
-userRouter(app);
-propertyRouter(app);
 
+userRouter(app);
+propertyRouter(app)
+swagger(app)
 
 app.use((error, req, res, next) => {
   if (error) {
