@@ -28,10 +28,13 @@ if (error) {
   //save a user
   User.create(user, (err, data) => {
     if (err) {
-      res.status(500).send({
-        "status": "error",
-        "error": err.message || "some error occured while creating user",
-      });
+      if (err.kind === "ER_DUP_ENTRY"){
+        return res.status(400).send({status: "error", message: "User already exists!"})
+      }
+        res.status(500).send({
+          status: "error",
+          error: err.message || "some error occured while creating user",
+        });
     } else {
       delete data.password;
       res.status(201).send({ "status": "success", "data": { ...data } });

@@ -9,7 +9,10 @@
     "dbup": "node ./src/utils/scripts/dbup.js",
     "dbdown": "node ./src/utils/scripts/dbdown.js",
     "tablesUp": "node ./src/utils/scripts/usersTableUp.js && node ./src/utils/scripts/tokensTableUp.js && node ./src/utils/scripts/propertiesTableUp.js && node ./src/utils/scripts/reportsTableUp.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watch --runInBand"
+  },
+  "jest": {
+    "jestEnvironment": "node"
   },
   "repository": {
     "type": "git",
@@ -38,6 +41,8 @@
     "swagger-ui-express": "^4.4.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.16"
+    "jest": "^28.1.0",
+    "nodemon": "^2.0.16",
+    "supertest": "^6.2.3"
   }
 }

@@ -9,7 +9,7 @@ const createTableUSers = `CREATE TABLE IF NOT EXISTS users (
   address varchar(255),
   password VARCHAR(255) NOT NULL,
   is_admin Boolean,
-  created_on TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
+  created_on TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP(6)
   )`
   
 const usersTable =()=> {

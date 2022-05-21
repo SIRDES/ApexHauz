@@ -101,6 +101,8 @@ module.exports = (app) => {
    *          $ref: "#/components/schemas/Users"
    *     500:
    *      $ref: "#/components/responses/ServerError"
+   *     400:
+   *      description: Bad request
    */
 
   /**
