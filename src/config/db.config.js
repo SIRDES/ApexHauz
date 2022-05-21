@@ -1,4 +1,4 @@
-const mysql = require("mysql2");
+const mysql = require("mysql");
 
 const { HOST, DB_PASSWORD, DB_USERNAME, DB_NAME } = require("../utils/secrets");
 const connection = mysql.createConnection({

@@ -33,6 +33,9 @@ class User {
       ],
       async (err, res) => {
         if (err) {
+          if (err.code === "ER_DUP_ENTRY"){
+            return result({ kind: "ER_DUP_ENTRY" });
+          }
           result(err, null);
           return;
         }
@@ -57,35 +60,45 @@ class User {
     });
   }
   // Reset user password
-  static resetPassword(body, callback){
-    db.query("SELECT * FROM users WHERE email=?", [body.email],async (error, data)=> {
-      if(error){
-        return callback(error,null)
-      }
-      if(data.length){
-        const isMatch= await bcrypt.compare(body.currentPassword,data[0].password)
-        if(isMatch){
-          // console.log(process.env.BCRYPT_SALT)
-          const hashPassword = await bcrypt.hash(body.newPassword,Number(process.env.BCRYPT_SALT))
-          db.query(
-            "UPDATE users SET password=? WHERE email=?",
-            [hashPassword, body.email],
-            (err, res) => {
-              if (err) {
-                return callback(err, null);
-              }
-              if (res.affectedRows >= 1) {
-                return callback(null, { kind: "success" });
-              }
-              return
-            }
-          );
-          return
+  static resetPassword(body, callback) {
+    db.query(
+      "SELECT * FROM users WHERE email=?",
+      [body.email],
+      async (error, data) => {
+        if (error) {
+          return callback(error, null);
         }
-        return callback({kind: "not match"}, null)
+        if (data.length) {
+          const isMatch = await bcrypt.compare(
+            body.currentPassword,
+            data[0].password
+          );
+          if (isMatch) {
+            // console.log(process.env.BCRYPT_SALT)
+            const hashPassword = await bcrypt.hash(
+              body.newPassword,
+              Number(process.env.BCRYPT_SALT)
+            );
+            db.query(
+              "UPDATE users SET password=? WHERE email=?",
+              [hashPassword, body.email],
+              (err, res) => {
+                if (err) {
+                  return callback(err, null);
+                }
+                if (res.affectedRows >= 1) {
+                  return callback(null, { kind: "success" });
+                }
+                return;
+              }
+            );
+            return;
+          }
+          return callback({ kind: "not match" }, null);
+        }
+        return callback({ kind: "not match" }, null);
       }
-      return callback({kind: "not match"}, null)
-    })
+    );
   }
   static signout(token, results) {
     db.query("DELETE FROM tokens where token=?", [token], (err, res) => {
