@@ -86,6 +86,7 @@ exports.getAll = async (req, res) => {
 //search for property according their type
 exports.search = async (req, res) => {
   const type = req.query.type
+  // const status = req.query.status
   Property.findByType(type,async (err, data) => {
     if (err) {
       if (err.kind === "not found") {

@@ -1,173 +1,85 @@
-ApexHauz
-second Capstone
-BUILD A PRODUCT: ApexHauz
+# ApexHauz API
 
-Project Overview
+ApexHauz project REST API
 
-ApexHauz is a platform where people can create and/or search properties for sale or rent
+## Project Overview
 
-Required features
+ApexHauz is a platform where people can create and/or search properties for sale or rent  
 
-User can sign up
-User can sign in
-User can post a property advert
-User can update the details of a property advert
+## Features
 
+- User can sign up
+- User can sign in
+- User can reset password
+- User can post a property advert
+- User can update the details of their property advert
 
-User can mark  his/her posted advert as sold
-User can delete his/her property advert
-User can view all property adverts
-User can view all properties of a specific type - 2 bedrooms, 3 bedrooms, mini flat etc*
-User can view a specific property advert
+- User can mark  his/her posted advert as sold
+- User can delete his/her property advert
+- User can view all property adverts
+- User can view all properties of a specific type - 2 bedrooms, 3 bedrooms, mini flat etc*
+- User can view a specific property advert
 
-Optional features
+- User can report a posted advert as fraudulent
+- User can add pictures to a posted advert
 
-User can reset password
-User can report a posted advert as fraudulent
-User can add multiple pictures to a posted advert
-Preparation Guidelines
+## Tools
 
-These are the steps you ought to take to get ready to start building the project
+- NodeJS
+- ExpressJS
+- MySQL
+- JWT => Token management
+- bcryptjs => Password hashing
+- joi => validation
+- Multer => handles image file input
+- Cloudinary => storing images  
 
-Create a GitHub Repository, add a README.md file, and clone it to your computer. find how to create a GitHub Repo here
-Challenge: Create API endpoints
+### Dev tools
 
-Summary
+- nodemon => for running the project in development mode
+- Jest => for testing
+- Swagger => for documentation
 
-You are expected to create a set of API endpoints defined in the API Endpoints Specification section and use MySQL to store data
+## starting the app
 
-NB: You are to create pull request(PR) for each feature in the challenge and then merge it into your main branch
+### Install dependencies
 
-Tools
+- npm install
 
-NodeJS
-ExpressJS
-MySQL
-JWT => Token management
-bcryptjs => Password hash
-Guidelines
+### setup the environment variables
 
-Version your API using URL versioning starting with the letter "v". Avoid dot notation as 1.0. An example of this will be: https://example.com/api/v1
-Setup the server-side of the application using expressjs
-Use separate branches for each feature
-Use Cloudinary to store your images and only save the URL in your application's database
-On GitHub, create a GitHub project with a basic Kanban board
-On GitHub under GitHub issues, create the following issues and attach them to your created project: user can signup, user can sign in, user can post a property advert, user can update the details of a property advert, user can mark his/her posted advert as sold, user can delete his/her advert, user can view all properties, user can view all properties of a specific type, user can view a specific property
-Under GitHub issues, create issues to capture any other tasks not captured above.
-API Response Specification
+- Create an .env file in the root directory
+- Set the .env file using the format and details in the .env.examples file  
 
-The API endpoints should respond with the appropriate HTTP response status code and a JSON object with contains either a data property(on success) or an error property(on failure). When present, the data is always an object or an array.
+### start the server
 
-On success
+- npm start -- starts the server
 
-{ "status": "success", "data": {...}}
+- npm run dev -- starts the server in dev mode
 
-On Error
+- In the local developement the server will run on localhost:5000 if not changeed  
 
-{ "status": "error", "error": "error-message"}
+## API Endpoint Specification
 
-Target skills with relevant links
+POST /v1/auth/signup: Create user account
 
-Project management: Click here to see how to create a GH repository project
-Version control with GIT: Click here to learn how to use git & GitHub
-Cloudinary with Node.js: Click here, and here
-HTTP & Web services: Click here
-Entity Specification
-
-Users
+Request body:
 
 {
+    email: "johndoe@example.com", //required
 
-    "id": Integer,
+    first_name: "John",
 
-    "email": String,
+    last_name: "Doe",
 
-    "first_name": String,
+    phone: "+233244556677"
 
-    "last_name": String,
+    password: "mypassword", //required
 
-    "password": String,
+    address: "My address",
 
-    "phone": String,
-
-    "address": String,
-
-    "is_admin": Boolean,
-
-    ...
-
+    is_admin: false
 }
-
-Property
-
-{
-
-    "id": Integer,
-
-    "owner": Integer,  // user id
-
-    "status": String,   // sold, available - default is available
-
-    "price": Float,
-
-    "state": String,
-
-    "city": String,
-
-    "address": String,
-
-    "type": String,    // 2 bedrooms, etc
-
-    "image_url": String,
-
-    "created_on": DateTime,
-
-    ...
-
-}
-"id": Integer,
-
-    "property_id": Integer,
-
-    "created_on": DateTime,
-
-    "reason": String,
-
-    "description": String,
-CREATE TABLE Reports (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  property_id INT UNSIGNED,
-  reason varchar(255),
-  description LONGTEXT,
-  created_on DATETIME DEFAULT NOW(),
-  FOREIGN KEY (property_id) REFERENCES Property (property_id) ON DELETE CASCADE
-)
-ALTER TABLE Property MODIFY property_id INT PRIMARY KEY AUTO_INCREMENT
-ALTER TABLE Reports ADD user_id INT UNSIGNED
-
-Reports
-
-{
-
-    "id": Integer,
-
-    "property_id": Integer,
-
-    "created_on": DateTime,
-
-    "reason": String,
-
-    "description": String,
-
-    ...
-
-}
-
-
-
-API Endpoint Specification
-
-POST /auth/signup: Create user account
 
 Response spec:
 
@@ -187,13 +99,27 @@ Response spec:
 
         "email": String,
 
-        ...
+        "address": String,
+
+        "phone": String,
+
+        "is_admin": boolean
 
     }
 
 }
 
-POST /auth/signin: Login a user
+POST /v1/auth/login: Login a user
+
+Request body:
+
+{
+
+    email: "johndoe@example.com",
+
+    password: "Mypassword"
+
+}
 
 Response Spec:
 
@@ -205,7 +131,7 @@ Response Spec:
 
         "token": "token-generated-with-jwt-npm-package",
 
-        "id": Integer,  // user id
+        "id": Integer,  // id of the newly created user
 
         "first_name": String,
 
@@ -213,13 +139,37 @@ Response Spec:
 
         "email": String,
 
-        ...
+        "address": String,
+
+        "phone": String,
+
+        "is_admin": boolean
 
     }
 
 }
 
-POST /property: Create a property advert
+POST /v1/property: Create a property advert
+
+Request body:
+
+{
+
+        "status": String, // available or sold. Default is available
+
+        "type": String, //required
+
+        "state": String,
+
+        "city": String,
+
+        "address": String, // required
+
+        "price": Float, // required
+
+        "created_on": DateTime,
+
+}
 
 Response spec:
 
@@ -230,6 +180,8 @@ Response spec:
     "data": {
 
         "id": Integer,
+
+        "owner_id: Integer,
 
         "status": String,
 
@@ -243,19 +195,55 @@ Response spec:
 
         "price": Float,
 
+        "images_url": Array,
+
         "created_on": DateTime,
-
-        "image_url": String,
-
-        ...
 
     }
 
 }
 
-PATCH /property/<:property-id>: Update property data
+POST /v1/property/<:property_id>/upload: Uploads property images  
 
-Note: Include any field you will like to update in your request object and only update those fields
+Request body: multipart // form data
+
+{
+    fieldName: "images" // Shared name of the multipart form fields to process.
+}
+
+Response spec:
+
+{
+
+    "status": "success",
+
+    "data": {
+
+        "img_urls": Array,
+
+    }
+
+}
+
+PATCH /v1/property/<:property-id>: Update property data  
+
+#### Note: Only include fields you will like to update in your request object  
+
+Request body:
+
+{
+
+        "type": String,
+
+        "state": String,
+
+        "city": String,
+
+        "address": String,
+
+        "price": Float,
+
+}
 
 Response spec:
 
@@ -266,6 +254,8 @@ Response spec:
     "data": {
 
         "id": Integer,
+
+        "owner_id: Integer,
 
         "status": String,
 
@@ -279,17 +269,15 @@ Response spec:
 
         "price": Float,
 
+        "images_url": Array,
+
         "created_on": DateTime,
-
-        "image_url": String,
-
-        ...
 
     }
 
 }
 
-PATCH /property/<:property-id>/sold: Mark a property as sold
+PATCH /v1/property/<:property-id>/sold: Marks a property as sold
 
 Response spec:
 
@@ -300,6 +288,8 @@ Response spec:
     "data": {
 
         "id": Integer,
+
+        "owner_id: Integer,
 
         "status": String,
 
@@ -313,17 +303,15 @@ Response spec:
 
         "price": Float,
 
+        "images_url": Array,
+
         "created_on": DateTime,
-
-        "image_url": String,
-
-        ...
 
     }
 
-}
+}}
 
-DELETE /property/<:property-id>: Delete a property advert
+DELETE /v1/property/<:property-id>: Delete a property advert
 
 Response spec
 
@@ -335,6 +323,8 @@ Response spec
 
         "id": Integer,
 
+        "owner_id: Integer,
+
         "status": String,
 
         "type": String,
@@ -347,17 +337,15 @@ Response spec
 
         "price": Float,
 
+        "images_url": Array,
+
         "created_on": DateTime,
-
-        "image_url": String,
-
-        ...
 
     }
 
 }
 
-GET /property/<:property-id>: Get a specific property by ID
+GET /v1/property/<:property-id>: Get a specific property by ID
 
 {
 
@@ -367,6 +355,8 @@ GET /property/<:property-id>: Get a specific property by ID
 
         "id": Integer,
 
+        "owner_id: Integer,
+
         "status": String,
 
         "type": String,
@@ -379,11 +369,9 @@ GET /property/<:property-id>: Get a specific property by ID
 
         "price": Float,
 
+        "images_url": Array,
+
         "created_on": DateTime,
-
-        "image_url": String,
-
-        ...
 
     }
 
@@ -391,67 +379,7 @@ GET /property/<:property-id>: Get a specific property by ID
 
 
 
-GET /property: Get all properties
-
-Response spec
-
-{
-
-    "status": "success",
-
-    "data": [{
-
-        "id": Integer,
-
-        "status": String,
-
-        "type": String,
-
-        "state": String,
-
-        "city": String,
-
-        "address": String,
-
-        "price": Float,
-
-        "created_on": DateTime,
-
-        "image_url": String,
-
-        ...
-
-        }, {
-
-        "id": Integer,
-
-        "status": String,
-
-        "type": String,
-
-        "state": String,
-
-        "city": String,
-
-        "address": String,
-
-        "price": Float,
-
-        "created_on": DateTime,
-
-        "image_url": String,
-
-        ...
-
-        }
-
-        ...
-
-    ]
-
-}
-
-GET /property/search?type=propertyType: Get all properties with a specific type
+GET /v1/property: Get all properties
 
 Response spec
 
@@ -465,6 +393,8 @@ Response spec
 
         "id": Integer,
 
+        "owner_id: Integer,
+
         "status": String,
 
         "type": String,
@@ -477,16 +407,16 @@ Response spec
 
         "price": Float,
 
+        "images_url": Array,
+
         "created_on": DateTime,
 
-        "image_url": String,
-
-        ...
-
-        }, {
+    }, {
 
         "id": Integer,
 
+        "owner_id: Integer,
+
         "status": String,
 
         "type": String,
@@ -499,17 +429,120 @@ Response spec
 
         "price": Float,
 
+        "images_url": Array,
+
         "created_on": DateTime,
 
-        "image_url": String,
-
-        ...
-
-        }
-
+    }
         ...
 
     ]
 
 }
 
+GET /property/search?type=propertyType: Get all properties with a specific type
+
+Response spec
+
+Response spec:
+
+{
+
+    "status": "success",
+
+    "data": [
+
+        {
+
+        "id": Integer,
+
+        "owner_id: Integer,
+
+        "status": String,
+
+        "type": String,
+
+        "state": String,
+
+        "city": String,
+
+        "address": String,
+
+        "price": Float,
+
+        "images_url": Array,
+
+        "created_on": DateTime,
+
+    }, {
+
+        "id": Integer,
+
+        "owner_id: Integer,
+
+        "status": String,
+
+        "type": String,
+
+        "state": String,
+
+        "city": String,
+
+        "address": String,
+
+        "price": Float,
+
+        "images_url": Array,
+
+        "created_on": DateTime,
+
+    }
+        ...
+
+    ]
+
+}
+
+POST /v1/property/:id/report: Reports a property as fraudulent  
+
+Request body:  
+
+{
+
+    "reason: String,
+
+    "description": String
+
+}
+
+Response body:
+
+{
+
+    "status": "success",
+
+    "data": {
+
+        "id": Integer,
+
+        "owner_id: Integer,
+
+        "status": String,
+
+        "type": String,
+
+        "state": String,
+
+        "city": String,
+
+        "address": String,
+
+        "price": Float,
+
+        "images_url": Array,
+
+        "created_on": DateTime,
+
+    }
+
+}

@@ -7,7 +7,7 @@ const createTableProperties = `CREATE TABLE IF NOT EXISTS properties (
   price float NOT NULL,
   state varchar(20),
   city varchar(30),
-  address varchar(255),
+  address varchar(255) NOT NULL,
   type VARCHAR(50) NOT NULL,
   is_admin Boolean,
   images_url JSON,
